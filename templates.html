@@ -1,0 +1,160 @@
+<style>
+    @keyframes animation_name {
+
+    50%{
+        transform: scale(1.5);
+    }
+
+    }
+
+    main{
+        margin: 8%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-gap: 20px;
+    }
+
+    .person{
+        color: rgb(19, 19, 19);
+        background-color: rgb(229, 222, 222);
+        border: 1px solid black;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 1px 1px 1px ;
+    }
+    img{
+        width: 100%;
+    }
+    
+</style>
+
+
+
+
+
+
+<main>
+
+
+    
+
+    <template  v="people">
+        <div class="person" >
+            <h1 t="name"></h1>
+            <h2 t="age"></h2>
+
+            
+        </div>
+    </template>
+
+
+    
+</main>
+    
+
+
+
+<script>
+
+    people = [
+        {name: 'yuval', age: 25, n_stuff: {first: 1, second: 2, third: 3}},
+        {name: 'ishai', age: 30, n_stuff: {first: 1, second: 2, third: 3}},
+        {name: 'or', age: 28, n_stuff: {first: 1, second: 2, third: 3}},
+        {name: 'shani', age: 22, n_stuff: {first: 1, second: 2, third: 3}},
+        {name: 'yoni', age: 22, n_stuff: {first: 1, second: 2, third: 3}},
+        {name: 'yoni', age: 22, n_stuff: {first: 1, second: 2, third: 3}},
+
+    ]
+
+
+    // document.querySelectorAll('[v]').forEach(c=>r(window[c.getAttribute('v')],c));
+    // function e(c,v){const n=document.importNode(c.content,!0),p=c.parentNode;
+    //     for(let k in v){const e=v[k];n.querySelectorAll(`[l=${k}]`).forEach(i=>t(i,e)),n.querySelectorAll(`[t=${k}]`).forEach(i=>i.textContent=e),n.querySelectorAll(`[s=${k}]`).forEach(i=>i.src=e)}p.appendChild(n)}
+    //     function t(c,v){const n=document.importNode(c.content,!0),p=c.parentNode;for(let i=0;i<v.length;i++)
+    //         {const e=v[i];n.querySelectorAll(`[l=i${i}]`).forEach(c=>t(c,e)),n.querySelectorAll(`[t=i${i}]`).forEach(c=>c.textContent=e),n.querySelectorAll(`[s=i${i}]`).forEach(c=>c.src=e)}p.appendChild(n)}
+    //     function r(l,c){l.forEach(o=>{Array.isArray(o)?t(c,o):e(c,o)})}function rerender(c,p,v){c.parentNode.querySelectorAll(`[k=${p}]`).forEach(e=>{e.textContent=v,e.dispatchEvent(new Event('change'))})}
+
+
+
+    document.querySelectorAll('[v]').forEach(component => render(window[component.getAttribute('v')], component))
+
+
+
+    function create_element_from_obj(component, values) {
+
+        const component_copy= document.importNode(component.content, true);
+
+        const new_parrent = component.parentNode;
+
+
+        for (let key in values) {
+
+            const value = values[key];
+
+            component_copy.querySelectorAll(`[l=${key}]`).forEach(inner_element => create_element_from_list(inner_element, value));
+            component_copy.querySelectorAll(`[o=${key}]`).forEach(inner_element => create_element_from_obj(inner_element, value));
+            component_copy.querySelectorAll(`[t=${key}]`).forEach(el => el.textContent = value);
+            component_copy.querySelectorAll(`[s=${key}]`).forEach(el => el.src = value);
+        }
+
+        new_parrent.appendChild(component_copy);
+    }
+
+    function create_element_from_list(component, values) {
+
+        const component_copy= document.importNode(component.content, true);
+
+        const new_parrent = component.parentNode;
+
+
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+
+
+            component_copy.querySelectorAll(`[l=i${i}]`).forEach(inner_element => create_element_from_list(inner_element, value));
+            component_copy.querySelectorAll(`[o=i${i}]`).forEach(inner_element => create_element_from_obj(inner_element, value));
+            component_copy.querySelectorAll(`[t=i${i}]`).forEach(el => el.textContent = value);
+            component_copy.querySelectorAll(`[s=i${i}]`).forEach(el => el.src = value);
+        }
+
+        new_parrent.appendChild(component_copy);
+        }
+
+
+    function render(list, component) {
+        /**
+         * @param {Object.<string, any>} values
+         */
+
+        list.forEach(object_or_list => {
+            if (Array.isArray(object_or_list)) {
+                create_element_from_list(component, object_or_list)
+            } else {
+                create_element_from_obj(component, object_or_list)
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function rerender(component, property, value) {
+        component.parentNode.querySelectorAll(`[k=${property}]`).forEach(el => {
+            el.textContent = value;
+            el.dispatchEvent(new Event('change'));
+        });
+    }
+
+
+
+</script>
