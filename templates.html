@@ -36,9 +36,10 @@
         <div class="item blueprint">
             <h1>{heading}</h1>
             <p>{stuff}</p>
-            <div class="baby">
-                <h1>{heading}</h1>
-                <p>{stuff}</p>
+
+            <div class="baby" onclick="alert('{hello}')">
+                <h1>{heading2}</h1>
+                <p>{stuff2}</p>
             </div>
         </div>
         
@@ -49,8 +50,8 @@
     <script>
         function map_to_template(template, state, recusersive_renders) {
             let templatesHtml = template.innerHTML;
-            const placeholders = Object.keys(state).map(key => `\\{${key}\\}`).join('|');
-            const regex = new RegExp(placeholders, 'g');
+            const regex = new RegExp(`\\{(${Object.keys(state).join('|')})\\}`, 'g');
+
             templatesHtml = templatesHtml.replace(regex, (match) => clean_html(state[match.slice(1, -1)]));
             const new_div = document.createElement('div');
             new_div.innerHTML = templatesHtml;
@@ -64,16 +65,28 @@
                 
             });            
             const templates_parent = template.parentElement;
-            templates_parent.appendChild(new_div);
-
+            
             if (recusersive_renders) {
                 Object.keys(recusersive_renders).forEach(key => {
-                    map_to_template(template.querySelector(`.${key}`), recusersive_renders[key])
-
+                    map_to_template_recursive(new_div.querySelector(`.${key}`), recusersive_renders[key])
                     
-                })
-            }
+                    
+                    })
+                    }
+                templates_parent.appendChild(new_div);
+                    }
+
+
+        function map_to_template_recursive(template, state) {
+            let templatesHtml = template.innerHTML;
+            const regex = new RegExp(`\\{(${Object.keys(state).join('|')})\\}`, 'g');
+            templatesHtml = templatesHtml.replace(regex, (match) => clean_html(state[match.slice(1, -1)]));
+            
+            template.classList.remove('blueprint');
+            template.innerHTML = templatesHtml;
+                  
         }
+
 
         function clean_html(html) {
             return html
@@ -85,8 +98,7 @@
                     "'": '&#39;'
                 })[match]);
         }
-        map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'}, {baby: {heading: 'yo', stuff: 'world'}})
-        map_to_template(document.querySelector('.item'), {heading: 'yo', stuff: 'world'})
+        map_to_template(document.querySelector('.item'), {hello: "baby", heading: 'hello', stuff: 'world'}, {baby: {heading2: 'ydfhdshdsho', stuff2: 'worlfadgfdgdagdad'}})
         map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
         map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
         map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
