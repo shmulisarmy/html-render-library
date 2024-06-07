@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        main {
+                    margin: 8%;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    grid-gap: 20px;
+                }
+
+
+                .item {
+                border: 1px solid black;
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+                box-shadow: 1px 1px 1px 
+                }
+                .blueprint{
+                    background-color: aqua;
+                }
+                .baby{
+                    background-color: blueviolet;
+                }
+    </style>
+</head>
+<body>
+
+
+
+    <main>
+        <div class="item blueprint">
+            <h1>{heading}</h1>
+            <p>{stuff}</p>
+            <div class="baby">
+                <h1>{heading}</h1>
+                <p>{stuff}</p>
+            </div>
+        </div>
+        
+                                                                                                                                                        
+    </main>
+
+
+    <script>
+        function map_to_template(template, state, recusersive_renders) {
+            let templatesHtml = template.innerHTML;
+            const placeholders = Object.keys(state).map(key => `\\{${key}\\}`).join('|');
+            const regex = new RegExp(placeholders, 'g');
+            templatesHtml = templatesHtml.replace(regex, (match) => clean_html(state[match.slice(1, -1)]));
+            const new_div = document.createElement('div');
+            new_div.innerHTML = templatesHtml;
+            
+            new_div.classList.remove('blueprint');
+            Array.from(template.classList).forEach(className => {
+                if (className !== 'blueprint'){
+
+                    new_div.classList.add(className);
+                    }
+                
+            });            
+            const templates_parent = template.parentElement;
+            templates_parent.appendChild(new_div);
+
+            if (recusersive_renders) {
+                Object.keys(recusersive_renders).forEach(key => {
+                    map_to_template(template.querySelector(`.${key}`), recusersive_renders[key])
+
+                    
+                })
+            }
+        }
+
+        function clean_html(html) {
+            return html
+                .replace(/[&<>"']/g, (match) => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[match]);
+        }
+        map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'}, {baby: {heading: 'yo', stuff: 'world'}})
+        map_to_template(document.querySelector('.item'), {heading: 'yo', stuff: 'world'})
+        map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
+        map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
+        map_to_template(document.querySelector('.item'), {heading: 'hello', stuff: 'world'})
+    </script>
+    
+</body>
+</html>
